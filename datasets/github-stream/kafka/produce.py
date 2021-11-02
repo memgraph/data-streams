@@ -28,7 +28,7 @@ def produce():
                 'followers': rows['followers'],
                 'following': rows['following'],
             }
-            kafka_producer.send("sales", json.dumps(data).encode('utf8'))
+            kafka_producer.send(KAFKA_TOPIC, json.dumps(data).encode('utf8'))
             print(data)
             kafka_producer.flush()
             sleep(1)

@@ -54,11 +54,19 @@ services:
     ports:
       - 9092:9092
       - 29092:29092
+  
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - app-tier
 
   art-blocks-stream:
     build:
       context: ./
-      dockerfile: ./datasets/art-blocks-stream/Dockerfile
+      dockerfile: ./datasets/art-blocks-stream/kafka/Dockerfile
     entrypoint: ["python3", "produce.py"]
     environment:
       KAFKA_IP: kafka
@@ -72,10 +80,24 @@ services:
     networks:
       - app-tier
 
+  art-blocks-stream-rabbit:
+    build:
+      context: ./
+      dockerfile: ./datasets/art-blocks-stream/rabbitmq/Dockerfile
+    entrypoint: ["python3", "produce.py"]
+    environment:
+      RABBITMQ_IP: rabbitmq
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_QUEUE: "sales"
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-tier
+
   github-stream:
     build:
       context: ./
-      dockerfile: ./datasets/github-stream/Dockerfile
+      dockerfile: ./datasets/github-stream/kafka/Dockerfile
     entrypoint: ["python3", "produce.py"]
     environment:
       KAFKA_IP: kafka
@@ -86,5 +108,19 @@ services:
       REDPANDA_TOPIC: "github"
     depends_on:
       - kafka
+    networks:
+      - app-tier
+
+  github-stream-rabbit:
+    build:
+      context: ./
+      dockerfile: ./datasets/github-stream/rabbitmq/Dockerfile
+    entrypoint: ["python3", "produce.py"]
+    environment:
+      RABBITMQ_IP: rabbitmq
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_QUEUE: "github"
+    depends_on:
+      - rabbitmq
     networks:
       - app-tier
