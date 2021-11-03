@@ -1,10 +1,18 @@
 import json
 import csv
+from datetime import datetime
+import pandas as pd
 
 PROJECTS_CSV = "projects.csv"
 ACCOUNTS_CSV = "accounts.csv"
 TOKENS_CSV = "tokens.csv"
 SALES_CSV = "sales.csv"
+
+
+def sort_sales():
+    df = pd.read_csv(SALES_CSV)
+    sorted_df = df.sort_values(by=["timestamp"], ascending=True)
+    sorted_df.to_csv(SALES_CSV, index=False)
 
 
 def main():
@@ -25,7 +33,7 @@ def main():
                     tokens_header = ['project_id',
                                      'owner_id', 'token_id', 'created_at']
                     sales_header = ['project_id', 'sale_id', 'token_id', 'seller_id',
-                                    'buyer_id', 'payment_token', 'price', 'block_number', 'timestamp']
+                                    'buyer_id', 'payment_token', 'price', 'block_number', 'timestamp', 'datetime']
 
                     projects_writer = csv.DictWriter(
                         projects_file, quoting=csv.QUOTE_ALL, fieldnames=projects_header)
@@ -98,6 +106,8 @@ def main():
                             payment_token = sale["openSeaSale"]["paymentToken"]
                             price = sale["openSeaSale"]["price"]
                             timestamp = sale["openSeaSale"]["blockTimestamp"]
+                            dt_object = datetime.fromtimestamp(int(timestamp))
+
                             # there is one token in each sale, and it's first in list of sales -> [0]
                             sold_token_id = sale["openSeaSale"]["openSeaSaleLookupTables"][0]["token"]["id"]
                             block_number = sale["openSeaSale"]["blockNumber"]
@@ -112,8 +122,11 @@ def main():
                                 'payment_token': payment_token,
                                 'price': price,
                                 'block_number': block_number,
-                                'timestamp': timestamp
+                                'timestamp': timestamp,
+                                'datetime': dt_object
                             })
+
+    sort_sales()
 
 
 if __name__ == "__main__":
