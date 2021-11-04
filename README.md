@@ -18,22 +18,14 @@ Currently available datasets:
 
 ## :fast_forward: How to start the streams?
 
-### Kafka
-
-To start a Kafka stream, run:
+Place yourself in root folder and run:
 
 ```
-docker-compose rm -sf
-docker-compose up core
-
-docker-compose build <DATA_STREAM>
-docker-compose up <DATA_STREAM>
+python3 start.py --platforms <PLATFORMS> --dataset <DATASET>
 ```
 
-Where `<DATA_STREAM>` can be either `github-stream` or `art-blocks-stream`. A
-producer and consumer will be started automatically.
+Where `<PLATFORMS>` can be `kafka`, `redpanda`, `rabbitmq` and/or `pulsar`, and `<DATASET>` is `github-stream` or `art-blocks-stream`.
 
 ## :scroll: References
 
-There's no documentation yet, but it's coming soon! Throw us a star to keep up
-with upcoming changes.
+There's no documentation yet, but it's coming soon! Throw us a star to keep up with upcoming changes.
