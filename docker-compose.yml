@@ -66,16 +66,15 @@ services:
       - app-tier
 
   pulsar:
-    image: apachepulsar/pulsar
-    expose:
-      - 8080
-      - 6650
+    image: apachepulsar/pulsar:2.6.0
+    ports:
+      - 8080:8080
+      - 6650:6650
     environment:
-      - BOOKIE_MEM=" -Xms512m -Xmx512m -XX:MaxDirectMemorySize=1g"
-    command: >
-      /bin/bash -c
-      "bin/apply-config-from-env.py conf/standalone.conf
-      && exec bin/pulsar standalone --advertised-address standalone"
+      PULSAR_MEM: " -Xms512m -Xmx512m -XX:MaxDirectMemorySize=1g"    
+    command: bin/pulsar standalone
+    networks:
+      - app-tier
 
   core:
     image: tianon/true
@@ -103,7 +102,7 @@ services:
       RABBITMQ_QUEUE: "sales"
       PULSAR_IP: pulsar
       PULSAR_PORT: "6650"
-      PULSAR_QUEUE: "sales"
+      PULSAR_TOPIC: "sales"
     depends_on:
       - kafka
       - redpanda
@@ -129,7 +128,7 @@ services:
       RABBITMQ_QUEUE: "github"
       PULSAR_IP: pulsar
       PULSAR_PORT: "6650"
-      PULSAR_QUEUE: "github"
+      PULSAR_TOPIC: "github"
     depends_on:
       - kafka
       - redpanda

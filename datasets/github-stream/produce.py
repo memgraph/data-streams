@@ -7,6 +7,8 @@ import kafka_producer as kafka_producers
 import kafka_setup
 import os
 import pika
+import pulsar
+import pulsar_consumer
 import rabbitmq_consumer
 
 
@@ -19,6 +21,9 @@ REDPANDA_TOPIC = os.getenv('REDPANDA_TOPIC', 'github')
 RABBITMQ_IP = os.getenv('RABBITMQ_IP', 'localhost')
 RABBITMQ_PORT = os.getenv('RABBITMQ_PORT', '5672')
 RABBITMQ_QUEUE = os.getenv('RABBITMQ_QUEUE', 'github')
+PULSAR_IP = os.getenv('PULSAR_IP', 'localhost')
+PULSAR_PORT = os.getenv('PULSAR_PORT', '6650')
+PULSAR_TOPIC = os.getenv('PULSAR_TOPIC', 'sales')
 DATA = "data/github-network.csv"
 
 
@@ -59,6 +64,25 @@ def produce_rabbitmq(ip, port, queue):
         connection.close()
 
 
+def produce_pulsar(ip, port, topic):
+    print('pulsar://' + ip + ':' + port)
+    client = pulsar.Client('pulsar://' + ip + ':' + port)
+    producer = client.create_producer(topic)
+    with open(DATA) as file:
+        csvReader = csv.DictReader(file)
+        for rows in csvReader:
+            data = {
+                'commit': rows['commit'],
+                'author': rows['author'],
+                'followers': rows['followers'],
+                'following': rows['following'],
+            }
+            producer.send(json.dumps(
+                data).encode('utf8'))
+            sleep(1)
+        client.close()
+
+
 def run():
     kafka_setup.run(KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC)
 
@@ -83,12 +107,21 @@ def run():
         RABBITMQ_IP, RABBITMQ_PORT, RABBITMQ_QUEUE, "RabbitMQ"))
     p6.start()
 
+    p7 = Process(target=lambda: produce_pulsar(
+        PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC))
+    p7.start()
+    p8 = Process(target=lambda: pulsar_consumer.run(
+        PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC, "Pulsar"))
+    p8.start()
+
     p1.join()
     p2.join()
     p3.join()
     p4.join()
     p5.join()
     p6.join()
+    p7.join()
+    p8.join()
 
 
 def main():
