@@ -90,6 +90,8 @@ services:
       context: ./
       dockerfile: ./datasets/art-blocks-stream/Dockerfile
     entrypoint: ["python3", "produce.py"]
+    env_file: 
+      platform_variables.env
     environment:
       KAFKA_IP: kafka
       KAFKA_PORT: "9092"
@@ -103,11 +105,6 @@ services:
       PULSAR_IP: pulsar
       PULSAR_PORT: "6650"
       PULSAR_TOPIC: "sales"
-    depends_on:
-      - kafka
-      - redpanda
-      - rabbitmq
-      - pulsar
     networks:
       - app-tier
 
@@ -116,6 +113,8 @@ services:
       context: ./
       dockerfile: ./datasets/github-stream/Dockerfile
     entrypoint: ["python3", "produce.py"]
+    env_file: 
+      platform_variables.env
     environment:
       KAFKA_IP: kafka
       KAFKA_PORT: "9092"
@@ -129,10 +128,5 @@ services:
       PULSAR_IP: pulsar
       PULSAR_PORT: "6650"
       PULSAR_TOPIC: "github"
-    depends_on:
-      - kafka
-      - redpanda
-      - rabbitmq
-      - pulsar
     networks:
       - app-tier

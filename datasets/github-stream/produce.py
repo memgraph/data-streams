@@ -24,6 +24,10 @@ RABBITMQ_QUEUE = os.getenv('RABBITMQ_QUEUE', 'github')
 PULSAR_IP = os.getenv('PULSAR_IP', 'localhost')
 PULSAR_PORT = os.getenv('PULSAR_PORT', '6650')
 PULSAR_TOPIC = os.getenv('PULSAR_TOPIC', 'sales')
+KAFKA = os.getenv('KAFKA', 'False')
+REDPANDA = os.getenv('REDPANDA', 'False')
+RABBITMQ = os.getenv('RABBITMQ', 'False')
+PULSAR = os.getenv('PULSAR', 'False')
 DATA = "data/github-network.csv"
 
 
@@ -84,44 +88,53 @@ def produce_pulsar(ip, port, topic):
 
 
 def run():
-    kafka_setup.run(KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC)
 
-    p1 = Process(target=lambda: produce_kafka_redpanda(
-        KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC))
-    p1.start()
-    p2 = Process(target=lambda: kafka_consumer.run(
-        KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC, "Kafka"))
-    p2.start()
+    process_list = list()
 
-    p3 = Process(target=lambda: produce_kafka_redpanda(
-        REDPANDA_IP, REDPANDA_PORT, REDPANDA_TOPIC))
-    p3.start()
-    p4 = Process(target=lambda: kafka_consumer.run(
-        REDPANDA_IP, REDPANDA_PORT, REDPANDA_TOPIC, "Redpanda"))
-    p4.start()
+    if KAFKA == 'True':
+        kafka_setup.run(KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC)
 
-    p5 = Process(target=lambda: produce_rabbitmq(
-        RABBITMQ_IP, RABBITMQ_PORT, RABBITMQ_QUEUE))
-    p5.start()
-    p6 = Process(target=lambda: rabbitmq_consumer.run(
-        RABBITMQ_IP, RABBITMQ_PORT, RABBITMQ_QUEUE, "RabbitMQ"))
-    p6.start()
+        p1 = Process(target=lambda: produce_kafka_redpanda(
+            KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC))
+        p1.start()
+        process_list.append(p1)
+        p2 = Process(target=lambda: kafka_consumer.run(
+            KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC, "Kafka"))
+        p2.start()
+        process_list.append(p2)
 
-    p7 = Process(target=lambda: produce_pulsar(
-        PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC))
-    p7.start()
-    p8 = Process(target=lambda: pulsar_consumer.run(
-        PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC, "Pulsar"))
-    p8.start()
+    if REDPANDA == 'True':
+        p3 = Process(target=lambda: produce_kafka_redpanda(
+            REDPANDA_IP, REDPANDA_PORT, REDPANDA_TOPIC))
+        p3.start()
+        process_list.append(p3)
+        p4 = Process(target=lambda: kafka_consumer.run(
+            REDPANDA_IP, REDPANDA_PORT, REDPANDA_TOPIC, "Redpanda"))
+        p4.start()
+        process_list.append(p4)
 
-    p1.join()
-    p2.join()
-    p3.join()
-    p4.join()
-    p5.join()
-    p6.join()
-    p7.join()
-    p8.join()
+    if RABBITMQ == 'True':
+        p5 = Process(target=lambda: produce_rabbitmq(
+            RABBITMQ_IP, RABBITMQ_PORT, RABBITMQ_QUEUE))
+        p5.start()
+        process_list.append(p5)
+        p6 = Process(target=lambda: rabbitmq_consumer.run(
+            RABBITMQ_IP, RABBITMQ_PORT, RABBITMQ_QUEUE, "RabbitMQ"))
+        p6.start()
+        process_list.append(p6)
+
+    if PULSAR == 'True':
+        p7 = Process(target=lambda: produce_pulsar(
+            PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC))
+        p7.start()
+        process_list.append(p7)
+        p8 = Process(target=lambda: pulsar_consumer.run(
+            PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC, "Pulsar"))
+        p8.start()
+        process_list.append(p8)
+
+    for process in process_list:
+        process.join()
 
 
 def main():
