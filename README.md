@@ -16,15 +16,17 @@ Currently available datasets:
 - [Art Blocks](./datasets/art-blocks-stream)
 - [GitHub](./datasets/github-stream)
 
-## :fast_forward: How to start a stream?
+## :fast_forward: How to start the streams?
 
 ### Kafka
 
 To start a Kafka stream, run:
 
 ```
-docker-compose rm
-docker-compose build
+docker-compose rm -sf
+docker-compose up core
+
+docker-compose build <DATA_STREAM>
 docker-compose up <DATA_STREAM>
 ```
 

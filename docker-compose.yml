@@ -54,7 +54,9 @@ services:
     ports:
       - 9092:9092
       - 29092:29092
-  
+    networks:
+      - app-tier
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
     ports:
@@ -63,10 +65,31 @@ services:
     networks:
       - app-tier
 
+  pulsar:
+    image: apachepulsar/pulsar
+    expose:
+      - 8080
+      - 6650
+    environment:
+      - BOOKIE_MEM=" -Xms512m -Xmx512m -XX:MaxDirectMemorySize=1g"
+    command: >
+      /bin/bash -c
+      "bin/apply-config-from-env.py conf/standalone.conf
+      && exec bin/pulsar standalone --advertised-address standalone"
+
+  core:
+    image: tianon/true
+    restart: "no"
+    depends_on:
+      - kafka
+      - redpanda
+      - rabbitmq
+      - pulsar
+
   art-blocks-stream:
     build:
       context: ./
-      dockerfile: ./datasets/art-blocks-stream/kafka/Dockerfile
+      dockerfile: ./datasets/art-blocks-stream/Dockerfile
     entrypoint: ["python3", "produce.py"]
     environment:
       KAFKA_IP: kafka
@@ -75,29 +98,24 @@ services:
       REDPANDA_IP: redpanda
       REDPANDA_PORT: "29092"
       REDPANDA_TOPIC: "sales"
-    depends_on:
-      - kafka
-    networks:
-      - app-tier
-
-  art-blocks-stream-rabbit:
-    build:
-      context: ./
-      dockerfile: ./datasets/art-blocks-stream/rabbitmq/Dockerfile
-    entrypoint: ["python3", "produce.py"]
-    environment:
       RABBITMQ_IP: rabbitmq
       RABBITMQ_PORT: "5672"
       RABBITMQ_QUEUE: "sales"
+      PULSAR_IP: pulsar
+      PULSAR_PORT: "6650"
+      PULSAR_QUEUE: "sales"
     depends_on:
+      - kafka
+      - redpanda
       - rabbitmq
+      - pulsar
     networks:
       - app-tier
 
   github-stream:
     build:
       context: ./
-      dockerfile: ./datasets/github-stream/kafka/Dockerfile
+      dockerfile: ./datasets/github-stream/Dockerfile
     entrypoint: ["python3", "produce.py"]
     environment:
       KAFKA_IP: kafka
@@ -106,21 +124,16 @@ services:
       REDPANDA_IP: redpanda
       REDPANDA_PORT: "29092"
       REDPANDA_TOPIC: "github"
-    depends_on:
-      - kafka
-    networks:
-      - app-tier
-
-  github-stream-rabbit:
-    build:
-      context: ./
-      dockerfile: ./datasets/github-stream/rabbitmq/Dockerfile
-    entrypoint: ["python3", "produce.py"]
-    environment:
       RABBITMQ_IP: rabbitmq
       RABBITMQ_PORT: "5672"
       RABBITMQ_QUEUE: "github"
+      PULSAR_IP: pulsar
+      PULSAR_PORT: "6650"
+      PULSAR_QUEUE: "github"
     depends_on:
+      - kafka
+      - redpanda
       - rabbitmq
+      - pulsar
     networks:
       - app-tier
