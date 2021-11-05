@@ -85,7 +85,6 @@ def produce_pulsar(ip, port, topic):
 def run():
     process_list = list()
     if KAFKA == 'True':
-        print("kafka is true")
         kafka_setup.run(KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC)
 
         p1 = Process(target=lambda: produce_kafka_redpanda(
@@ -98,7 +97,6 @@ def run():
         process_list.append(p2)
 
     if REDPANDA == 'True':
-        print("redpanda is true")
         p3 = Process(target=lambda: produce_kafka_redpanda(
             REDPANDA_IP, REDPANDA_PORT, REDPANDA_TOPIC))
         p3.start()
@@ -109,7 +107,6 @@ def run():
         process_list.append(p4)
 
     if RABBITMQ == 'True':
-        print("rabbitmq is true")
         p5 = Process(target=lambda: produce_rabbitmq(
             RABBITMQ_IP, RABBITMQ_PORT, RABBITMQ_QUEUE))
         p5.start()
@@ -120,7 +117,6 @@ def run():
         process_list.append(p6)
 
     if PULSAR == 'True':
-        print("pulsar is true")
         p7 = Process(target=lambda: produce_pulsar(
             PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC))
         p7.start()

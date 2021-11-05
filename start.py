@@ -1,7 +1,6 @@
-# use os.system() or subprocess.call()
-# import os
 import subprocess
 import argparse
+from time import sleep
 
 
 def parse_arguments():
@@ -17,7 +16,7 @@ def parse_arguments():
 
 def docker_build_run(platforms, dataset):
     subprocess.call("docker-compose rm -sf", shell=True)
-    # also systemctl stop kafka, zookeeper and similar? - had that problem
+    # TODO check local machine for ports
 
     # build all choosen platforms
     for platform in platforms:
@@ -37,6 +36,8 @@ def docker_build_run(platforms, dataset):
     for platform in platforms:
         env_var += " " + "-e " + platform.upper() + "=True"
 
+    # TODO wait for platforms
+    sleep(5)
     subprocess.call("docker-compose run" +
                     env_var + " " + dataset, shell=True)
 
