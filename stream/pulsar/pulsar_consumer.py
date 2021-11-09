@@ -15,4 +15,4 @@ def run(ip, port, topic, platform):
         except:
             # Message failed to be processed
             consumer.negative_acknowledge(msg)
-    client.close()
+            client.close()
