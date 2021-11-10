@@ -45,8 +45,9 @@ def docker_build_run(platforms, dataset):
         env_var += " " + "-e " + platform.upper() + "=True"
         list_of_ports.append(platform.upper() + "_PORT")
 
+    # TODO: check if PULSAR is really running - not based on port
     sleep(8)
-    # check used ports based on flags with 10 retries
+
     retries = 30
 
     ports_not_used = True
