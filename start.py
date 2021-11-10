@@ -50,7 +50,6 @@ def docker_build_run(platforms, dataset):
     retries = 30
 
     ports_not_used = True
-    ports_used = list()
     while retries > 0 and ports_not_used:
         ports_not_used = False
         for port in list_of_ports:
@@ -80,7 +79,6 @@ def is_port_in_use():
         test_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         if test_socket.connect_ex(('localhost', int(globals()[port]))) == 0:
             return True
-            break
         test_socket.close()
     return False
 
