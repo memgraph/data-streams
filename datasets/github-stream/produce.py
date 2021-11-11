@@ -13,7 +13,7 @@ import rabbitmq_consumer
 
 
 KAFKA_IP = os.getenv('KAFKA_IP', 'localhost')
-KAFKA_PORT = os.getenv('KAFKA_PORT', '9092')
+KAFKA_PORT = os.getenv('KAFKA_PORT', '9093')
 KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', 'github')
 REDPANDA_IP = os.getenv('REDPANDA_IP', 'localhost')
 REDPANDA_PORT = os.getenv('REDPANDA_PORT', '29092')
