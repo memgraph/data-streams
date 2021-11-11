@@ -4,7 +4,6 @@ import json
 
 
 def run(ip, port, topic, platform):
-    total = 0
     consumer = KafkaConsumer(topic,
                              bootstrap_servers=ip + ':' + port,
                              auto_offset_reset='earliest',
@@ -19,8 +18,6 @@ def run(ip, port, topic, platform):
                 for message in messages:
                     message = json.loads(message.value.decode('utf8'))
                     print(platform, " :", str(message))
-                    total += 1
-                    print("Total number of messages: " + str(total))
 
     except KeyboardInterrupt:
         pass
