@@ -5,7 +5,9 @@ import socket
 import os
 import re
 
-KAFKA_PORT = os.getenv('KAFKA_PORT', '9092')
+# TODO: kafka alone not working
+
+KAFKA_PORT = os.getenv('KAFKA_PORT', '9093')
 REDPANDA_PORT = os.getenv('REDPANDA_PORT', '29092')
 RABBITMQ_PORT = os.getenv('RABBITMQ_PORT', '5672')
 PULSAR_PORT = os.getenv('PULSAR_PORT', '6650')
