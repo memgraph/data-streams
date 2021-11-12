@@ -22,10 +22,69 @@ REDPANDA = os.getenv('REDPANDA', 'False')
 RABBITMQ = os.getenv('RABBITMQ', 'False')
 PULSAR = os.getenv('PULSAR', 'False')
 
+project_sales = dict()
+seler_sales = dict()
+buyer_sales = dict()
+best_sale = 0
+day_sales = dict()
+
+
+def analyze(message):
+    # ----BEST PROJECT----
+    global project_sales
+    project_id = str(message["project_id"])
+    if project_id in project_sales:
+        project_sales[project_id] += 1
+    else:
+        project_sales[project_id] = 1
+    best_project = max(project_sales, key=project_sales.get)
+    print("Project with largest number of sales: " + str(best_project))
+    print("Number of sales: " + str(project_sales[best_project]))
+
+    # ----BEST SELLER----
+    global seler_sales
+    seller_id = str(message["seller_id"])
+    if seller_id in seler_sales:
+        seler_sales[seller_id] += 1
+    else:
+        seler_sales[seller_id] = 1
+    best_seller = max(seler_sales, key=seler_sales.get)
+    print("Seller with largest number of sales: " + str(best_seller))
+    print("Number of sales: " + str(seler_sales[best_seller]))
+
+    # ----BEST BUYER----
+    global buyer_sales
+    buyer_id = str(message["buyer_id"])
+    if buyer_id in buyer_sales:
+        buyer_sales[buyer_id] += 1
+    else:
+        buyer_sales[buyer_id] = 1
+    best_buyer = max(buyer_sales, key=buyer_sales.get)
+    print("Buyer with largest number of sales: " + str(best_buyer))
+    print("Number of buys: " + str(buyer_sales[best_buyer]))
+
+    # ----BEST SALE----
+    global best_sale
+    price = int(message["price"])
+    if price > best_sale:
+        best_sale = price
+    print("Best sale price is: " + str(best_sale))
+
+    # ----BEST DAY----
+    global day_sales
+    datetime = str(message["datetime"])
+    date = datetime.split(" ")[0]
+    if date in day_sales:
+        day_sales[date] += 1
+    else:
+        day_sales[date] = 1
+    best_day = max(day_sales, key=day_sales.get)
+    print("Day with largest number of sales: " + str(best_day))
+    print("Number of sales: " + str(day_sales[best_day]))
+
 
 def consume_kafka_redpanda(ip, port, topic, platform):
     print("Running kafka consumer")
-    total = 0
     consumer = KafkaConsumer(topic,
                              bootstrap_servers=ip + ':' + port,
                              auto_offset_reset='earliest',
@@ -40,8 +99,7 @@ def consume_kafka_redpanda(ip, port, topic, platform):
                 for message in messages:
                     message = json.loads(message.value.decode('utf8'))
                     print(platform, " :", str(message))
-                    total += 1
-                    print("Total number of messages: " + str(total))
+                    analyze(message)
 
     except KeyboardInterrupt:
         pass
