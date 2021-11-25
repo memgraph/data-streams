@@ -27,9 +27,16 @@ seler_sales = dict()
 buyer_sales = dict()
 best_sale = 0
 day_sales = dict()
+total_sales = 0
 
 
 def analyze(message):
+    # ----TOTAL SALES----
+    global total_sales
+    total_sales += 1
+    print("Total number of sales: " + str(total_sales))
+    print("------------------------------------------------------")
+
     # ----BEST PROJECT----
     global project_sales
     project_id = str(message["project_id"])
@@ -40,6 +47,7 @@ def analyze(message):
     best_project = max(project_sales, key=project_sales.get)
     print("Project with largest number of sales: " + str(best_project))
     print("Number of sales: " + str(project_sales[best_project]))
+    print("------------------------------------------------------")
 
     # ----BEST SELLER----
     global seler_sales
@@ -51,6 +59,7 @@ def analyze(message):
     best_seller = max(seler_sales, key=seler_sales.get)
     print("Seller with largest number of sales: " + str(best_seller))
     print("Number of sales: " + str(seler_sales[best_seller]))
+    print("------------------------------------------------------")
 
     # ----BEST BUYER----
     global buyer_sales
@@ -62,6 +71,7 @@ def analyze(message):
     best_buyer = max(buyer_sales, key=buyer_sales.get)
     print("Buyer with largest number of sales: " + str(best_buyer))
     print("Number of buys: " + str(buyer_sales[best_buyer]))
+    print("------------------------------------------------------")
 
     # ----BEST SALE----
     global best_sale
@@ -69,6 +79,8 @@ def analyze(message):
     if price > best_sale:
         best_sale = price
     print("Best sale price is: " + str(best_sale))
+    print("Sale id: " + str(message["sale_id"]))
+    print("------------------------------------------------------")
 
     # ----BEST DAY----
     global day_sales
@@ -81,6 +93,7 @@ def analyze(message):
     best_day = max(day_sales, key=day_sales.get)
     print("Day with largest number of sales: " + str(best_day))
     print("Number of sales: " + str(day_sales[best_day]))
+    print("------------------------------------------------------")
 
 
 def consume_kafka_redpanda(ip, port, topic, platform):

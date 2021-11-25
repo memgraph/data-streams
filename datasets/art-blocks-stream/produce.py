@@ -10,7 +10,7 @@ import pika
 import pulsar
 import pulsar_consumer
 import rabbitmq_consumer
-
+import setup
 
 KAFKA_IP = os.getenv('KAFKA_IP', 'localhost')
 KAFKA_PORT = os.getenv('KAFKA_PORT', '9093')
@@ -29,20 +29,31 @@ REDPANDA = os.getenv('REDPANDA', 'False')
 RABBITMQ = os.getenv('RABBITMQ', 'False')
 PULSAR = os.getenv('PULSAR', 'False')
 DATA = "data/sales.csv"
+MEMGRAPH_IP = os.getenv('MEMGRAPH_IP', 'memgraph-mage')
+MEMGRAPH_PORT = os.getenv('MEMGRAPH_PORT', '7687')
 
 
 def produce_kafka_redpanda(ip, port, topic):
     print("Producing messages")
     kafka_producer = kafka_producers.create_kafka_producer(ip, port)
     with open(DATA) as file:
-        csvReader = csv.DictReader(file)
-        for rows in csvReader:
-            sale_id = rows["sale_id"]
-            data = {
-                sale_id: rows
+        for line in file.readlines():
+            line_list = line.strip().split(",")
+            line_json = {
+                'project_id': line_list[0],
+                'sale_id': line_list[1],
+                'token_id': line_list[2],
+                'seller_id': line_list[3],
+                'buyer_id': line_list[4],
+                'payment_token': line_list[5],
+                'price': line_list[6],
+                'block_number': line_list[7],
+                'datetime': line_list[9]
             }
+
+            print(f'Sending data to sales topic')
             kafka_producer.send(topic, json.dumps(
-                data[sale_id]).encode('utf8'))
+                line_json).encode('utf8'))
             kafka_producer.flush()
             sleep(1)
         kafka_producer.close()
@@ -84,9 +95,13 @@ def produce_pulsar(ip, port, topic):
 
 
 def run():
+
+    memgraph = setup.connect_to_memgraph(MEMGRAPH_IP, MEMGRAPH_PORT)
+    setup.load_artblocks_data(memgraph)
     process_list = list()
     if KAFKA == 'True':
-        kafka_setup.run(KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC)
+        setup.run(memgraph, KAFKA_IP, KAFKA_PORT)
+        #kafka_setup.run(KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC)
 
         p1 = Process(target=lambda: produce_kafka_redpanda(
             KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC))

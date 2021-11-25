@@ -72,8 +72,28 @@ services:
       - 8080:8080
       - 6650:6650
     environment:
-      PULSAR_MEM: " -Xms512m -Xmx512m -XX:MaxDirectMemorySize=1g"    
+      PULSAR_MEM: " -Xms512m -Xmx512m -XX:MaxDirectMemorySize=1g"
     command: bin/pulsar standalone
+    networks:
+      - app-tier
+
+  memgraph-mage:
+    build: ./memgraph
+    user: root
+    volumes:
+      - ./memgraph/import-data:/usr/lib/memgraph/import-data
+      - ./memgraph/mg_lib:/var/lib/memgraph
+      - ./memgraph/mg_log:/var/log/memgraph
+    entrypoint:
+      [
+        "/usr/lib/memgraph/memgraph",
+        "--telemetry-enabled=false",
+        "--kafka-bootstrap-servers=kafka:9092",
+        "--query-modules-directory=/usr/lib/memgraph/query_modules",
+        "--log-level=TRACE"
+      ]
+    ports:
+      - "7687:7687"
     networks:
       - app-tier
 
@@ -82,17 +102,14 @@ services:
     restart: "no"
     depends_on:
       - kafka
-      - redpanda
-      - rabbitmq
-      - pulsar
+      - memgraph-mage
 
   art-blocks-stream:
     build:
       context: ./
       dockerfile: ./datasets/art-blocks-stream/Dockerfile
-    entrypoint: ["python3", "produce.py"]
-    env_file: 
-      platform_variables.env
+    entrypoint: [ "python3", "produce.py" ]
+    env_file: platform_variables.env
     environment:
       KAFKA_IP: kafka
       KAFKA_PORT: "9092"
@@ -113,9 +130,8 @@ services:
     build:
       context: ./
       dockerfile: ./datasets/github-stream/Dockerfile
-    entrypoint: ["python3", "produce.py"]
-    env_file: 
-      platform_variables.env
+    entrypoint: [ "python3", "produce.py" ]
+    env_file: platform_variables.env
     environment:
       KAFKA_IP: kafka
       KAFKA_PORT: "9092"
@@ -136,9 +152,8 @@ services:
     build:
       context: ./
       dockerfile: ./data-analysis/Dockerfile
-    entrypoint: ["python3", "art-blocks-analysis.py"]
-    env_file:
-      platform_variables.env
+    entrypoint: [ "python3", "art-blocks-analysis.py" ]
+    env_file: platform_variables.env
     environment:
       KAFKA_IP: kafka
       KAFKA_PORT: "9092"
@@ -159,9 +174,8 @@ services:
     build:
       context: ./
       dockerfile: ./data-analysis/Dockerfile
-    entrypoint: ["python3", "github-analysis.py"]
-    env_file:
-      platform_variables.env
+    entrypoint: [ "python3", "github-analysis.py" ]
+    env_file: platform_variables.env
     environment:
       KAFKA_IP: kafka
       KAFKA_PORT: "9092"
