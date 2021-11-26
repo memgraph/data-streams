@@ -20,7 +20,7 @@ def parse_arguments():
     parser.add_argument("--platforms", nargs="+", choices=["kafka", "redpanda", "rabbitmq", "pulsar"],
                         default=["kafka", "redpanda", "rabbitmq", "pulsar"])
     parser.add_argument("--dataset", type=str,
-                        choices=["art-blocks-stream", "github-stream", "movielens-stream"], default="art-blocks-stream")
+                        choices=["art-blocks", "github", "movielens"], default="movielens")
 
     value = parser.parse_args()
     return value
@@ -39,7 +39,7 @@ def docker_build_run(platforms, dataset):
             "docker-compose up -d " + platform, shell=True)
 
     # env-file: KAFKA, REDPANDA, RABBITMQ, PULSAR - default False
-    # adding -e KAFKA=True -e REDPANDA=True will change those env var
+    # adding -e KAFKA=True -e REDPANDA=True will change those env vars
 
     list_of_ports = list()
     env_var = ""
@@ -65,7 +65,7 @@ def docker_build_run(platforms, dataset):
             test_socket.close()
         retries -= 1
         sleep(1)
-    #sleep(5)
+    # sleep(5)
     if not ports_not_used:
         subprocess.call("docker-compose run" +
                         env_var + " " + dataset, shell=True)

@@ -100,12 +100,11 @@ services:
       - redpanda
       - pulsar
       - rabbitmq
-      - memgraph-mage
 
-  art-blocks-stream:
+  art-blocks:
     build:
       context: ./
-      dockerfile: ./datasets/art-blocks-stream/Dockerfile
+      dockerfile: ./datasets/art-blocks/Dockerfile
     entrypoint: [ "python3", "produce.py" ]
     env_file: platform_variables.env
     environment:
@@ -116,10 +115,10 @@ services:
     networks:
       - app-tier
 
-  github-stream:
+  github:
     build:
       context: ./
-      dockerfile: ./datasets/github-stream/Dockerfile
+      dockerfile: ./datasets/github/Dockerfile
     entrypoint: [ "python3", "produce.py" ]
     env_file: platform_variables.env
     environment:
@@ -130,10 +129,10 @@ services:
     networks:
       - app-tier
 
-  movielens-stream:
+  movielens:
     build:
       context: ./
-      dockerfile: ./datasets/movielens-stream/Dockerfile
+      dockerfile: ./datasets/movielens/Dockerfile
     entrypoint: ["python3", "produce.py"]
     env_file:
       platform_variables.env
@@ -183,5 +182,18 @@ services:
       REDPANDA_TOPIC: "github"
       RABBITMQ_QUEUE: "github"
       PULSAR_TOPIC: "github"
+    networks:
+      - app-tier
+
+  movielens-memgraph:
+    build:
+      context: ./
+      dockerfile: ./data-analysis/Dockerfile
+    entrypoint: [ "python3", "movielens-memgraph.py" ]
+    environment:
+      MEMGRAPH_IP: memgraph-mage
+      MEMGRAPH_PORT: "7687"
+    depends_on:
+      - memgraph-mage
     networks:
       - app-tier
