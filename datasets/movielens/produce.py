@@ -24,7 +24,6 @@ def main():
     with open(DATA_MOVIES) as file:
         csvReader = csv.DictReader(file)
         for rows in csvReader:
-            print(rows)
             movieId = rows['movieId']
             movies_dict[movieId] = {
                 'movieId': movieId,
