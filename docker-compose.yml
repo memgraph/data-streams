@@ -5,6 +5,19 @@ networks:
     driver: bridge
 
 services:
+  memgraph-mage:
+    build: ./memgraph
+    ports:
+      - '7687:7687'
+    entrypoint: [
+      "/usr/lib/memgraph/memgraph",
+      "--telemetry-enabled=false",
+      "--kafka-bootstrap-servers=kafka:9092",
+      "--query-modules-directory=/transformations",
+      "--log-level=TRACE"]
+    networks:
+      - app-tier
+
   zookeeper:
     image: "bitnami/zookeeper:3.7"
     ports:
@@ -111,17 +124,9 @@ services:
     entrypoint: [ "python3", "produce.py" ]
     env_file: platform_variables.env
     environment:
-      KAFKA_IP: kafka
-      KAFKA_PORT: "9092"
       KAFKA_TOPIC: "sales"
-      REDPANDA_IP: redpanda
-      REDPANDA_PORT: "29092"
       REDPANDA_TOPIC: "sales"
-      RABBITMQ_IP: rabbitmq
-      RABBITMQ_PORT: "5672"
       RABBITMQ_QUEUE: "sales"
-      PULSAR_IP: pulsar
-      PULSAR_PORT: "6650"
       PULSAR_TOPIC: "sales"
     networks:
       - app-tier
@@ -133,18 +138,25 @@ services:
     entrypoint: [ "python3", "produce.py" ]
     env_file: platform_variables.env
     environment:
-      KAFKA_IP: kafka
-      KAFKA_PORT: "9092"
       KAFKA_TOPIC: "github"
-      REDPANDA_IP: redpanda
-      REDPANDA_PORT: "29092"
       REDPANDA_TOPIC: "github"
-      RABBITMQ_IP: rabbitmq
-      RABBITMQ_PORT: "5672"
       RABBITMQ_QUEUE: "github"
-      PULSAR_IP: pulsar
-      PULSAR_PORT: "6650"
       PULSAR_TOPIC: "github"
+    networks:
+      - app-tier
+
+  movielens-stream:
+    build:
+      context: ./
+      dockerfile: ./datasets/movielens-stream/Dockerfile
+    entrypoint: ["python3", "produce.py"]
+    env_file:
+      platform_variables.env
+    environment:
+      KAFKA_TOPIC: "ratings"
+      REDPANDA_TOPIC: "ratings"
+      RABBITMQ_QUEUE: "ratings"
+      PULSAR_TOPIC: "ratings"
     networks:
       - app-tier
 
@@ -155,17 +167,9 @@ services:
     entrypoint: [ "python3", "art-blocks-analysis.py" ]
     env_file: platform_variables.env
     environment:
-      KAFKA_IP: kafka
-      KAFKA_PORT: "9092"
       KAFKA_TOPIC: "sales"
-      REDPANDA_IP: redpanda
-      REDPANDA_PORT: "29092"
       REDPANDA_TOPIC: "sales"
-      RABBITMQ_IP: rabbitmq
-      RABBITMQ_PORT: "5672"
       RABBITMQ_QUEUE: "sales"
-      PULSAR_IP: pulsar
-      PULSAR_PORT: "6650"
       PULSAR_TOPIC: "sales"
     networks:
       - app-tier
@@ -177,17 +181,9 @@ services:
     entrypoint: [ "python3", "github-analysis.py" ]
     env_file: platform_variables.env
     environment:
-      KAFKA_IP: kafka
-      KAFKA_PORT: "9092"
       KAFKA_TOPIC: "github"
-      REDPANDA_IP: redpanda
-      REDPANDA_PORT: "29092"
       REDPANDA_TOPIC: "github"
-      RABBITMQ_IP: rabbitmq
-      RABBITMQ_PORT: "5672"
       RABBITMQ_QUEUE: "github"
-      PULSAR_IP: pulsar
-      PULSAR_PORT: "6650"
       PULSAR_TOPIC: "github"
     networks:
       - app-tier

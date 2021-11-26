@@ -20,7 +20,7 @@ def parse_arguments():
     parser.add_argument("--platforms", nargs="+", choices=["kafka", "redpanda", "rabbitmq", "pulsar"],
                         default=["kafka", "redpanda", "rabbitmq", "pulsar"])
     parser.add_argument("--dataset", type=str,
-                        choices=["art-blocks-stream", "github-stream"], default="art-blocks-stream")
+                        choices=["art-blocks-stream", "github-stream", "movielens-stream"], default="art-blocks-stream")
 
     value = parser.parse_args()
     return value
@@ -48,7 +48,7 @@ def docker_build_run(platforms, dataset):
         list_of_ports.append(platform.upper() + "_PORT")
 
     # TODO: check if PULSAR is really running - not based on port
-    sleep(8)
+    #sleep(8)
 
     retries = 30
 
@@ -65,7 +65,7 @@ def docker_build_run(platforms, dataset):
             test_socket.close()
         retries -= 1
         sleep(1)
-    sleep(5)
+    #sleep(5)
     if not ports_not_used:
         subprocess.call("docker-compose run" +
                         env_var + " " + dataset, shell=True)
