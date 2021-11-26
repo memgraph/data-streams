@@ -9,6 +9,8 @@ services:
     build: ./memgraph
     ports:
       - '7687:7687'
+    volumes:
+      - ./memgraph/import-data:/usr/lib/memgraph/import-data
     entrypoint: [
       "/usr/lib/memgraph/memgraph",
       "--telemetry-enabled=false",
@@ -90,31 +92,14 @@ services:
     networks:
       - app-tier
 
-  memgraph-mage:
-    build: ./memgraph
-    user: root
-    volumes:
-      - ./memgraph/import-data:/usr/lib/memgraph/import-data
-      - ./memgraph/mg_lib:/var/lib/memgraph
-      - ./memgraph/mg_log:/var/log/memgraph
-    entrypoint:
-      [
-        "/usr/lib/memgraph/memgraph",
-        "--telemetry-enabled=false",
-        "--kafka-bootstrap-servers=kafka:9092",
-        "--query-modules-directory=/usr/lib/memgraph/query_modules",
-        "--log-level=TRACE"
-      ]
-    ports:
-      - "7687:7687"
-    networks:
-      - app-tier
-
   core:
     image: tianon/true
     restart: "no"
     depends_on:
       - kafka
+      - redpanda
+      - pulsar
+      - rabbitmq
       - memgraph-mage
 
   art-blocks-stream:
@@ -171,6 +156,19 @@ services:
       REDPANDA_TOPIC: "sales"
       RABBITMQ_QUEUE: "sales"
       PULSAR_TOPIC: "sales"
+    networks:
+      - app-tier
+
+  art-blocks-memgraph:
+    build:
+      context: ./
+      dockerfile: ./data-analysis/Dockerfile
+    entrypoint: [ "python3", "art-blocks-memgraph.py" ]
+    environment:
+      MEMGRAPH_IP: memgraph-mage
+      MEMGRAPH_PORT: "7687"
+    depends_on:
+      - memgraph-mage
     networks:
       - app-tier
 

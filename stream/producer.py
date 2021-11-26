@@ -47,11 +47,11 @@ def produce_rabbitmq(ip, port, queue, generate):
         pika.ConnectionParameters(ip))
     channel = connection.channel()
     channel.queue_declare(queue=queue)
+    message = generate()
     while True:
         try:
-            message = generate()
             channel.basic_publish(
-                exchange='', routing_key=queue, body=json.dumps(message).encode('utf8'))
+                exchange='', routing_key=queue, body=json.dumps(next(message)).encode('utf8'))
             sleep(1)
         except Exception as e:
             print(f"Error: {e}")
@@ -61,10 +61,10 @@ def produce_rabbitmq(ip, port, queue, generate):
 def produce_pulsar(ip, port, topic, generate):
     client = pulsar.Client('pulsar://' + ip + ':' + port)
     producer = client.create_producer(topic)
+    message = generate()
     while True:
         try:
-            message = generate()
-            producer.send(json.dumps(message).encode('utf8'))
+            producer.send(json.dumps(next(message)).encode('utf8'))
             sleep(1)
         except Exception as e:
             print(f"Error: {e}")
@@ -90,30 +90,30 @@ def run(generate):
             REDPANDA_IP, REDPANDA_PORT, REDPANDA_TOPIC, generate))
         p3.start()
         process_list.append(p3)
-        # p4 = Process(target=lambda: kafka_consumer.run(
-        #    REDPANDA_IP, REDPANDA_PORT, REDPANDA_TOPIC, "Redpanda"))
-        # p4.start()
-        # process_list.append(p4)
+        p4 = Process(target=lambda: kafka_consumer.run(
+            REDPANDA_IP, REDPANDA_PORT, REDPANDA_TOPIC, "Redpanda"))
+        p4.start()
+        process_list.append(p4)
 
     if RABBITMQ == 'True':
         p5 = Process(target=lambda: produce_rabbitmq(
             RABBITMQ_IP, RABBITMQ_PORT, RABBITMQ_QUEUE, generate))
         p5.start()
         process_list.append(p5)
-        # p6 = Process(target=lambda: rabbitmq_consumer.run(
-        #    RABBITMQ_IP, RABBITMQ_PORT, RABBITMQ_QUEUE, "RabbitMQ"))
-        # p6.start()
-        # process_list.append(p6)
+        p6 = Process(target=lambda: rabbitmq_consumer.run(
+            RABBITMQ_IP, RABBITMQ_PORT, RABBITMQ_QUEUE, "RabbitMQ"))
+        p6.start()
+        process_list.append(p6)
 
     if PULSAR == 'True':
         p7 = Process(target=lambda: produce_pulsar(
             PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC, generate))
         p7.start()
         process_list.append(p7)
-        # p8 = Process(target=lambda: pulsar_consumer.run(
-        #    PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC, "Pulsar"))
-        # p8.start()
-        # process_list.append(p8)
+        p8 = Process(target=lambda: pulsar_consumer.run(
+            PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC, "Pulsar"))
+        p8.start()
+        process_list.append(p8)
 
     for process in process_list:
         process.join()

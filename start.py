@@ -48,7 +48,7 @@ def docker_build_run(platforms, dataset):
         list_of_ports.append(platform.upper() + "_PORT")
 
     # TODO: check if PULSAR is really running - not based on port
-    #sleep(8)
+    sleep(8)
 
     retries = 30
 
