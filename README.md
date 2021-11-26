@@ -24,7 +24,16 @@ Place yourself in root folder and run:
 python3 start.py --platforms <PLATFORMS> --dataset <DATASET>
 ```
 
-Where `<PLATFORMS>` can be `kafka`, `redpanda`, `rabbitmq` and/or `pulsar`, and `<DATASET>` is `github-stream` or `art-blocks-stream`.
+The argument `<PLATFORMS>` can be:
+- `kafka`,
+- `redpanda`,
+- `rabbitmq` and/or
+- `pulsar`.
+
+The argument `<DATASET>` can be:
+-  `github-stream` ,
+-  `art-blocks-stream` or
+-  `movielens-stream`.
 
 ## :scroll: References
 
