@@ -7,20 +7,20 @@ movies_dict = {}
 
 
 def generate():
-    with open(DATA_RATINGS) as file:
-        csvReader = csv.DictReader(file)
-        for rows in csvReader:
-            data = {
-                'userId': rows['userId'],
-                'movie': movies_dict[rows['movieId']],
-                'rating': rows['rating'],
-                'timestamp': rows['timestamp'],
-            }
-            yield data
+    while True:
+        with open(DATA_RATINGS) as file:
+            csvReader = csv.DictReader(file)
+            for rows in csvReader:
+                data = {
+                    'userId': rows['userId'],
+                    'movie': movies_dict[rows['movieId']],
+                    'rating': rows['rating'],
+                    'timestamp': rows['timestamp'],
+                }
+                yield data
 
 
 def main():
-    print("produce")
     with open(DATA_MOVIES) as file:
         csvReader = csv.DictReader(file)
         for rows in csvReader:

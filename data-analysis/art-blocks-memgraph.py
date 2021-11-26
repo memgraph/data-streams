@@ -22,6 +22,7 @@ def connect_to_memgraph(memgraph_ip, memgraph_port):
 
 
 def load_artblocks_data(memgraph):
+    memgraph.drop_database()
     path_projects = Path("/usr/lib/memgraph/import-data/projects.csv")
     path_accounts = Path("/usr/lib/memgraph/import-data/accounts.csv")
     path_tokens = Path("/usr/lib/memgraph/import-data/tokens.csv")

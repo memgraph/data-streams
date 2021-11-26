@@ -5,14 +5,22 @@ DATA = "data/sales.csv"
 
 
 def generate():
-    with open(DATA) as file:
-        csvReader = csv.DictReader(file)
-        for rows in csvReader:
-            sale_id = rows["sale_id"]
-            data = {
-                sale_id: rows
-            }
-            yield data
+    while True:
+        with open(DATA) as file:
+            for line in file.readlines():
+                line_list = line.strip().split(",")
+                line_json = {
+                    'project_id': line_list[0],
+                    'sale_id': line_list[1],
+                    'token_id': line_list[2],
+                    'seller_id': line_list[3],
+                    'buyer_id': line_list[4],
+                    'payment_token': line_list[5],
+                    'price': line_list[6],
+                    'block_number': line_list[7],
+                    'datetime': line_list[9]
+                }
+                yield line_json
 
 
 def main():

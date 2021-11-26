@@ -39,7 +39,7 @@ def produce_kafka_redpanda(ip, port, topic, generate):
             sleep(1)
         except Exception as e:
             print(f"Error: {e}")
-    kafka_producer.close()
+    # kafka_producer.close()
 
 
 def produce_rabbitmq(ip, port, queue, generate):
@@ -55,7 +55,7 @@ def produce_rabbitmq(ip, port, queue, generate):
             sleep(1)
         except Exception as e:
             print(f"Error: {e}")
-    connection.close()
+    # connection.close()
 
 
 def produce_pulsar(ip, port, topic, generate):
@@ -68,7 +68,7 @@ def produce_pulsar(ip, port, topic, generate):
             sleep(1)
         except Exception as e:
             print(f"Error: {e}")
-    client.close()
+    # client.close()
 
 
 def run(generate):
