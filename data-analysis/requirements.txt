@@ -1,3 +1,4 @@
 kafka-python==2.0.2
 pika==1.2.0
 pulsar-client==2.8.1
+gqlalchemy==1.0.5

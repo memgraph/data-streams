@@ -9,6 +9,8 @@ services:
     build: ./memgraph
     ports:
       - '7687:7687'
+    volumes:
+      - ./memgraph/import-data:/usr/lib/memgraph/import-data
     entrypoint: [
       "/usr/lib/memgraph/memgraph",
       "--telemetry-enabled=false",
@@ -96,16 +98,16 @@ services:
     depends_on:
       - kafka
       - redpanda
-      - rabbitmq
       - pulsar
+      - rabbitmq
+      - memgraph-mage
 
   art-blocks-stream:
     build:
       context: ./
       dockerfile: ./datasets/art-blocks-stream/Dockerfile
-    entrypoint: ["python3", "produce.py"]
-    env_file:
-      platform_variables.env
+    entrypoint: [ "python3", "produce.py" ]
+    env_file: platform_variables.env
     environment:
       KAFKA_TOPIC: "sales"
       REDPANDA_TOPIC: "sales"
@@ -118,9 +120,8 @@ services:
     build:
       context: ./
       dockerfile: ./datasets/github-stream/Dockerfile
-    entrypoint: ["python3", "produce.py"]
-    env_file:
-      platform_variables.env
+    entrypoint: [ "python3", "produce.py" ]
+    env_file: platform_variables.env
     environment:
       KAFKA_TOPIC: "github"
       REDPANDA_TOPIC: "github"
@@ -148,9 +149,8 @@ services:
     build:
       context: ./
       dockerfile: ./data-analysis/Dockerfile
-    entrypoint: ["python3", "art-blocks-analysis.py"]
-    env_file:
-      platform_variables.env
+    entrypoint: [ "python3", "art-blocks-analysis.py" ]
+    env_file: platform_variables.env
     environment:
       KAFKA_TOPIC: "sales"
       REDPANDA_TOPIC: "sales"
@@ -159,13 +159,25 @@ services:
     networks:
       - app-tier
 
+  art-blocks-memgraph:
+    build:
+      context: ./
+      dockerfile: ./data-analysis/Dockerfile
+    entrypoint: [ "python3", "art-blocks-memgraph.py" ]
+    environment:
+      MEMGRAPH_IP: memgraph-mage
+      MEMGRAPH_PORT: "7687"
+    depends_on:
+      - memgraph-mage
+    networks:
+      - app-tier
+
   github-analysis:
     build:
       context: ./
       dockerfile: ./data-analysis/Dockerfile
-    entrypoint: ["python3", "github-analysis.py"]
-    env_file:
-      platform_variables.env
+    entrypoint: [ "python3", "github-analysis.py" ]
+    env_file: platform_variables.env
     environment:
       KAFKA_TOPIC: "github"
       REDPANDA_TOPIC: "github"
