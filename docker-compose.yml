@@ -63,9 +63,9 @@ services:
       - --node-id
       - "0"
       - --kafka-addr
-      - PLAINTEXT://0.0.0.0:29092,OUTSIDE://54.217.170.100:9094
+      - PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9094
       - --advertise-kafka-addr
-      - PLAINTEXT://redpanda:29092,OUTSIDE://54.217.170.100:9094
+      - PLAINTEXT://redpanda:29092,OUTSIDE://0.0.0.0:9094
     image: docker.vectorized.io/vectorized/redpanda:v21.9.5
     ports:
       - 9094:9094

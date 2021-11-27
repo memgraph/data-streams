@@ -92,12 +92,10 @@ def run(generate):
             REDPANDA_IP, REDPANDA_PORT, REDPANDA_TOPIC, generate))
         p3.start()
         process_list.append(p3)
-        """
         p4 = Process(target=lambda: kafka_consumer.run(
             REDPANDA_IP, REDPANDA_PORT, REDPANDA_TOPIC, "Redpanda"))
         p4.start()
         process_list.append(p4)
-        """
 
     if RABBITMQ == 'True':
         p5 = Process(target=lambda: produce_rabbitmq(
