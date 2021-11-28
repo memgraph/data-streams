@@ -38,7 +38,7 @@ The argument `<DATASET>` can be:
 
 That script will start chosen streaming platforms in docker container, and you will see messages from chosen dataset being consumed.
 
-You can then connect with memgraph and stream the data into the database by running:
+You can then connect with Memgraph and stream the data into the database by running:
 ```
 docker-compose up <DATASET>-memgraph
 ```
