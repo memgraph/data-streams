@@ -30,6 +30,7 @@ def load_artblocks_data(memgraph):
     log.info("Loading projects...")
     memgraph.execute(
         f"""LOAD CSV FROM "{path_projects}"
+            WITH HEADER DELIMITER "," AS row
             CREATE (p:Project {{project_id: row.project_id, project_name: row.project_name, active: row.active, complete: row.complete, locked: row.locked, website: row.website}})
             MERGE (c:Contract {{contract_id: row.contract_id}})
             CREATE (p)-[:IS_ON]->(c);"""
@@ -39,8 +40,7 @@ def load_artblocks_data(memgraph):
 
     log.info("Loading accounts...")
     memgraph.execute(
-        f"""
-        LOAD CSV FROM "{path_accounts}"
+        f"""LOAD CSV FROM "{path_accounts}"
         WITH HEADER DELIMITER "," AS row
         MATCH (p:Project) WHERE p.project_id = row.project_id
         MERGE (a:Account {{account_id: row.account_id, account_name: row.account_name}})
@@ -51,15 +51,13 @@ def load_artblocks_data(memgraph):
 
     log.info("Loading tokens...")
     memgraph.execute(
-        f"""
-        LOAD CSV FROM "{path_tokens}"
+        f"""LOAD CSV FROM "{path_tokens}"
         WITH HEADER DELIMITER "," AS row
         MERGE (p:Project {{project_id: row.project_id}})
         MERGE (a:Account {{account_id: row.owner_id}})
         CREATE (t:Token {{token_id: row.token_id, created_at: row.created_at}})
         CREATE (t)-[:IS_PART_OF]->(p)
-        CREATE (a)-[:MINTS]->(t);
-        """
+        CREATE (a)-[:MINTS]->(t);"""
     )
 
     memgraph.execute(f"""CREATE INDEX ON :Token(token_id);""")
