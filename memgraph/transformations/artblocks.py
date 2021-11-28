@@ -15,9 +15,9 @@ def sales(messages: mgp.Messages
             mgp.Record(
                 query=(
                     "CREATE (s:Sale {sale_id: $sale_id, payment_token: $payment_token, price: $price, datetime: $datetime})"
-                    "MERGE (p:Project {project_id : $project_id})"
+                    "MERGE (p:Project {project_id: $project_id})"
                     "CREATE (p)-[:HAS]->(s)"
-                    "MERGE (a:Account{account_id: $seller_id})"
+                    "MERGE (a:Account {account_id: $seller_id})"
                     "CREATE (a)-[:IS_SELLING]->(s)"
                     "MERGE (b:Account {account_id: $buyer_id})"
                     "CREATE (b)-[:IS_BUYING]->(s)"

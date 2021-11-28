@@ -30,30 +30,12 @@ def load_artblocks_data(memgraph):
     log.info("Loading projects...")
     memgraph.execute(
         f"""LOAD CSV FROM "{path_projects}"
-            WITH HEADER DELIMITER "," AS row
-            CREATE (p:Project {{project_id: ToString(row.project_id), project_name: ToString(row.project_name), active: ToString(row.active),
-                    complete: ToString(row.complete), locked: ToString(row.locked),
-                    website: ToString(row.website)}})
-                    MERGE (c:Contract {{contract_id: ToString(row.contract_id)}})
-                    CREATE (p)-[:IS_ON]->(c);"""
+            CREATE (p:Project {{project_id: row.project_id, project_name: row.project_name, active: row.active, complete: row.complete, locked: row.locked, website: row.website}})
+            MERGE (c:Contract {{contract_id: row.contract_id}})
+            CREATE (p)-[:IS_ON]->(c);"""
     )
 
     memgraph.execute(f"""CREATE INDEX ON :Project(project_id);""")
-
-    log.info("Loading tokens...")
-    memgraph.execute(
-        f"""
-        LOAD CSV FROM "{path_tokens}"
-        WITH HEADER DELIMITER "," AS row
-        CREATE (t:Token {{token_id: ToString(row.token_id), created_at: ToString(row.created_at)}})
-        MERGE (p:Project {{project_id: ToString(row.project_id)}})
-        CREATE (t)-[:IS_PART_OF]->(p)
-        MERGE (a:Account {{account_id: ToString(row.owner_id)}})
-        CREATE (a)-[:MINTS]->(t);
-        """
-    )
-
-    memgraph.execute(f"""CREATE INDEX ON :Token(token_id);""")
 
     log.info("Loading accounts...")
     memgraph.execute(
@@ -61,11 +43,26 @@ def load_artblocks_data(memgraph):
         LOAD CSV FROM "{path_accounts}"
         WITH HEADER DELIMITER "," AS row
         MATCH (p:Project) WHERE p.project_id = row.project_id
-        MERGE (a:Account {{account_id: ToString(row.account_id), account_name: ToString(row.account_name)}})
+        MERGE (a:Account {{account_id: row.account_id, account_name: row.account_name}})
         CREATE (a)-[:CREATED]->(p);"""
     )
 
     memgraph.execute(f"""CREATE INDEX ON :Account(account_id);""")
+
+    log.info("Loading tokens...")
+    memgraph.execute(
+        f"""
+        LOAD CSV FROM "{path_tokens}"
+        WITH HEADER DELIMITER "," AS row
+        MERGE (p:Project {{project_id: row.project_id}})
+        MERGE (a:Account {{account_id: row.owner_id}})
+        CREATE (t:Token {{token_id: row.token_id, created_at: row.created_at}})
+        CREATE (t)-[:IS_PART_OF]->(p)
+        CREATE (a)-[:MINTS]->(t);
+        """
+    )
+
+    memgraph.execute(f"""CREATE INDEX ON :Token(token_id);""")
 
 
 def set_stream(memgraph):
