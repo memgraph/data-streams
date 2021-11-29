@@ -7,6 +7,7 @@ DATA = "data/sales.csv"
 def generate():
     while True:
         with open(DATA) as file:
+            file.readline()
             for line in file.readlines():
                 line_list = line.strip().split(",")
                 line_json = {

@@ -44,7 +44,7 @@ def load_artblocks_data(memgraph):
         WITH HEADER DELIMITER "," AS row
         MATCH (p:Project) WHERE p.project_id = row.project_id
         MERGE (a:Account {{account_id: row.account_id, account_name: row.account_name}})
-        CREATE (a)-[:CREATED]->(p);"""
+        CREATE (a)-[:CREATES]->(p);"""
     )
 
     memgraph.execute(f"""CREATE INDEX ON :Account(account_id);""")
@@ -66,7 +66,7 @@ def load_artblocks_data(memgraph):
 def set_stream(memgraph):
     log.info("Creating stream connections on Memgraph")
     memgraph.execute(
-        "CREATE KAFKA STREAM sales_stream TOPICS sales TRANSFORM artblocks.sales")
+        "CREATE PULSAR STREAM sales_stream TOPICS sales TRANSFORM artblocks.sales SERVICE_URL 'pulsar://pulsar:6650'")
     memgraph.execute("START STREAM sales_stream")
 
     # TODO: What to do when a new object is created
