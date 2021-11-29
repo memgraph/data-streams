@@ -80,10 +80,12 @@ def run(generate):
             KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC, generate))
         p1.start()
         process_list.append(p1)
+        """
         p2 = Process(target=lambda: kafka_consumer.run(
             KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC, "Kafka"))
         p2.start()
         process_list.append(p2)
+        """
 
     if REDPANDA == 'True':
         p3 = Process(target=lambda: produce_kafka_redpanda(
@@ -100,20 +102,24 @@ def run(generate):
             RABBITMQ_IP, RABBITMQ_PORT, RABBITMQ_QUEUE, generate))
         p5.start()
         process_list.append(p5)
+        """
         p6 = Process(target=lambda: rabbitmq_consumer.run(
             RABBITMQ_IP, RABBITMQ_PORT, RABBITMQ_QUEUE, "RabbitMQ"))
         p6.start()
         process_list.append(p6)
+        """
 
     if PULSAR == 'True':
         p7 = Process(target=lambda: produce_pulsar(
             PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC, generate))
         p7.start()
         process_list.append(p7)
+        """
         p8 = Process(target=lambda: pulsar_consumer.run(
             PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC, "Pulsar"))
         p8.start()
         process_list.append(p8)
+        """
 
     for process in process_list:
         process.join()

@@ -44,7 +44,7 @@ services:
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://54.217.170.100:9093
       - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
     depends_on:
       - zookeeper
@@ -65,7 +65,7 @@ services:
       - --kafka-addr
       - PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9094
       - --advertise-kafka-addr
-      - PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9094
+      - PLAINTEXT://redpanda:29092,OUTSIDE://0.0.0.0:9094
     image: docker.vectorized.io/vectorized/redpanda:v21.9.5
     ports:
       - 9094:9094

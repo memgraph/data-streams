@@ -1,11 +1,9 @@
-import subprocess
-import argparse
 from time import sleep
-import socket
+import argparse
 import os
 import re
-
-# TODO: kafka alone not working
+import socket
+import subprocess
 
 KAFKA_PORT = os.getenv('KAFKA_PORT', '9092')
 REDPANDA_PORT = os.getenv('REDPANDA_PORT', '29092')
