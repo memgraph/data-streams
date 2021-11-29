@@ -44,7 +44,7 @@ services:
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://54.217.170.100:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://0.0.0.0:9093
       - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
     depends_on:
       - zookeeper
@@ -105,7 +105,7 @@ services:
     build:
       context: ./
       dockerfile: ./datasets/art-blocks/Dockerfile
-    entrypoint: [ "python3", "produce.py" ]
+    entrypoint: [ "python3", "produce.py", "--stream-delay", "1.0", "--consumer" ]
     env_file: platform_variables.env
     environment:
       KAFKA_TOPIC: "sales"
@@ -119,7 +119,7 @@ services:
     build:
       context: ./
       dockerfile: ./datasets/github/Dockerfile
-    entrypoint: [ "python3", "produce.py" ]
+    entrypoint: [ "python3", "produce.py", "--stream-delay", "1.0", "--consumer" ]
     env_file: platform_variables.env
     environment:
       KAFKA_TOPIC: "github"
@@ -133,7 +133,7 @@ services:
     build:
       context: ./
       dockerfile: ./datasets/movielens/Dockerfile
-    entrypoint: ["python3", "produce.py"]
+    entrypoint: [ "python3", "produce.py", "--stream-delay", "1.0", "--consumer" ]
     env_file:
       platform_variables.env
     environment:

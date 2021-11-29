@@ -1,28 +1,19 @@
-<h1 align="center"> :bar_chart: GitHub Commits Streaming :bar_chart:</h1>
+<h1 align="center"> :bar_chart: Movie Ratings Stream :bar_chart:</h1>
 
 ## :speech_balloon: About
 
-GitHub is a provider of Internet hosting for software development and version
-control using Git. It offers the distributed version control and source code
-management (SCM) functionality of Git, plus its own features. It provides access
-control and several collaboration features such as bug tracking, feature
-requests, task management, continuous integration and wikis for every project.
+This dataset contains movie ratings by users.
 
 ## :open_file_folder: Dataset
 
-File `data/github-network.csv` was obtained using the custom GitHub scraper in
-[/scraper](./scraper). To create the CSV file, place yourself into the `scraper`
-directory and run:
+The files `data/movies.csv` and `data/ratings.csv` were obtained through the
+site **GroupLens** [[1]](#1).
 
-```
-python3 scraper.py
-```
-
-## :fast_forward: Streaming commits
+## :fast_forward: Streaming movie ratings
 
 Check the instructions in the root [README](../../README.md).
 
 ## :scroll: References
 
-<a id="1">[1]</a> Learn about GitHub at their
-[website](https://www.github.com/).
+<a id="1">[1]</a> [MovieLens
+dataset](https://grouplens.org/datasets/movielens/)
