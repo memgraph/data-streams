@@ -59,7 +59,7 @@ def parse_arguments():
 def run(generate):
     args = parse_arguments()
     process_list = list()
-
+    args.consumer = False
     if KAFKA == 'True':
         kafka_redpanda.create_topic(KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC)
 
@@ -104,11 +104,11 @@ def run(generate):
         p7.start()
         process_list.append(p7)
 
-        #if args.consumer:
-        #    p8 = Process(target=lambda: apache_pulsar.consumer(
-        #        PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC, "Pulsar"))
-        #    p8.start()
-        #    process_list.append(p8)
+        if args.consumer:
+            p8 = Process(target=lambda: apache_pulsar.consumer(
+                PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC, "Pulsar"))
+            p8.start()
+            process_list.append(p8)
 
     for process in process_list:
         process.join()
