@@ -63,7 +63,7 @@ def docker_build_run(platforms, dataset):
             test_socket.close()
         retries -= 1
         sleep(1)
-    sleep(10)
+    sleep(15)
     if not ports_not_used:
         subprocess.call("docker-compose run" +
                         env_var + " " + dataset, shell=True)
