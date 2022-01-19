@@ -104,11 +104,11 @@ def run(generate):
         p7.start()
         process_list.append(p7)
 
-        if args.consumer:
-            p8 = Process(target=lambda: apache_pulsar.consumer(
-                PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC, "Pulsar"))
-            p8.start()
-            process_list.append(p8)
+        #if args.consumer:
+        #    p8 = Process(target=lambda: apache_pulsar.consumer(
+        #        PULSAR_IP, PULSAR_PORT, PULSAR_TOPIC, "Pulsar"))
+        #    p8.start()
+        #    process_list.append(p8)
 
     for process in process_list:
         process.join()
