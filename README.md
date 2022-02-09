@@ -47,6 +47,9 @@ For example, if you choose Kafka as a streaming platform and art-blocks for your
 ```
 python3 start.py --platforms kafka --dataset art-blocks
 ```
+
+> If you are a Windows user and the upper command doesn't work, try replacing `python3` with `python`.
+
 Next, in the new terminal window run:
 ```
 docker-compose up art-blocks-memgraph
