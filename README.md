@@ -15,7 +15,7 @@ Currently available datasets:
 
 - [Art Blocks](./datasets/art-blocks/data)
 - [GitHub](./datasets/github/data)
-- [MovieLens](.datasets/movielens/data)
+- [MovieLens](./datasets/movielens/data)
 
 ## :fast_forward: How to start the streams?
 
