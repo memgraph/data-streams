@@ -143,6 +143,22 @@ services:
     networks:
       - app-tier
 
+  amazon-books:
+    build:
+      context: ./
+      dockerfile: ./datasets/amazon-books/Dockerfile
+    entrypoint: [ "python3", "produce.py", "--stream-delay", "1.0", "--consumer" ]
+    env_file:
+      platform_variables.env
+    environment:
+      KAFKA_TOPIC: "ratings"
+      REDPANDA_TOPIC: "ratings"
+      RABBITMQ_QUEUE: "ratings"
+      PULSAR_TOPIC: "ratings"
+    networks:
+      - app-tier
+      
+
   art-blocks-analysis:
     build:
       context: ./
@@ -185,6 +201,19 @@ services:
       - app-tier
 
   movielens-memgraph:
+    build:
+      context: ./
+      dockerfile: ./data-analysis/Dockerfile
+    entrypoint: [ "python3", "movielens-memgraph.py" ]
+    environment:
+      MEMGRAPH_IP: memgraph-mage
+      MEMGRAPH_PORT: "7687"
+    depends_on:
+      - memgraph-mage
+    networks:
+      - app-tier
+
+  amazon-books-memgraph:
     build:
       context: ./
       dockerfile: ./data-analysis/Dockerfile
