@@ -1,7 +1,8 @@
 import mgp
+import json
 
 @mgp.transformation
-def book_ratings(context: mgp.Messages 
+def book_ratings(messages: mgp.Messages 
             )-> mgp.Record(query=str, parameters=mgp.Nullable[mgp.Map]):
     result_queries = []
 

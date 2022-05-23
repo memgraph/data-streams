@@ -217,7 +217,7 @@ services:
     build:
       context: ./
       dockerfile: ./data-analysis/Dockerfile
-    entrypoint: [ "python3", "movielens-memgraph.py" ]
+    entrypoint: [ "python3", "amazon-books-memgraph.py" ]
     environment:
       MEMGRAPH_IP: memgraph-mage
       MEMGRAPH_PORT: "7687"

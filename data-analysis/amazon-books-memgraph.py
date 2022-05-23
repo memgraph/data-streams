@@ -23,9 +23,8 @@ def connect_to_memgraph(memgraph_ip, memgraph_port):
 
 def set_stream(memgraph):
     log.info("Creating stream connections on Memgraph")
-    memgraph.execute(
-        "CREATE PULSAR STREAM ratings_stream TOPICS ratings TRANSFORM amazon-books.books_ratings SERVICE_URL 'pulsar://pulsar:6650'")
-    memgraph.execute("START STREAM ratings_stream")
+    memgraph.execute("CREATE KAFKA STREAM ratings_stream TOPICS ratings TRANSFORM amazon_books.book_ratings BOOTSTRAP_SERVERS 'kafka:9092';")
+    memgraph.execute("START STREAM ratings_stream;")
 
     # TODO: What to do when a new object is created
     """
