@@ -11,7 +11,7 @@ def book_ratings(messages: mgp.Messages
         books_dict = json.loads(message.payload().decode('utf8'))
         result_queries.append(
             mgp.Record(
-                query=("MERGE (b:Book {id: $bookId}) "
+                query=("MERGE (b:Book {id: $bookId, title: $title}) "
                        "MERGE (u:User {id: $userId}) "
                        "WITH u, b "
                        "CREATE (u)-[r:RATED {rating: ToFloat($rating), timestamp: $timestamp}]->(b)"),
@@ -19,6 +19,8 @@ def book_ratings(messages: mgp.Messages
                     "bookId": books_dict["bookId"],
                     "userId": books_dict["userId"],
                     "rating": books_dict["rating"],
-                    "timestamp": books_dict["timestamp"]}))
+                    "timestamp": books_dict["timestamp"],
+                    "title": books_dict["title"]
+                    }))
 
     return result_queries

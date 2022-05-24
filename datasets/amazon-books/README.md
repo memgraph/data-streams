@@ -10,13 +10,14 @@ makes sense to analyze thair e-commerce data because of scale.
 
 ## :open_file_folder: Dataset
 
+Books played a vital role in Amazon's business scaling and a large part of daily sales
+are book sales. So it makes sense to use it as a streaming dataset. 
+Dataset consists of user book ratings. The ratings were aquired from: [Amazon dataset](https://jmcauley.ucsd.edu/data/amazon)
 
-Add description 
+## :fast_forward: Streaming book ratings
 
-## :fast_forward: Streaming commits
-
-Add description
+Check instructions in root [README](../../README.md) how to start data stream. 
 
 ## :scroll: References
 
-Add description
+Data source: [Amazon dataset](https://jmcauley.ucsd.edu/data/amazon)

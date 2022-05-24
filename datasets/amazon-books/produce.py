@@ -12,7 +12,8 @@ def generate():
                     'bookId': rows['bookId'],
                     'userId': rows['userId'],
                     'rating': rows['rating'],
-                    'timestamp': rows['timestamp']
+                    'timestamp': rows['timestamp'],
+                    'title' : rows['title']
                 }
                 yield data
 
