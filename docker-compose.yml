@@ -9,6 +9,7 @@ services:
     build: ./memgraph
     ports:
       - '7687:7687'
+      - '7444:7444'
     volumes:
       - ./memgraph/import-data:/usr/lib/memgraph/import-data
     entrypoint: [
