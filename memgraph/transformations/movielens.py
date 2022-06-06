@@ -17,7 +17,7 @@ def rating(messages: mgp.Messages
                        "WITH u, m "
                        "UNWIND $genres as genre "
                        "MERGE (m)-[:OF_GENRE]->(:Genre {name: genre}) "
-                       "CREATE (u)-[r:RATED {rating: ToFloat($rating), timestamp: $timestamp}]->(m)"),
+                       "MERGE (u)-[r:RATED {rating: ToFloat($rating), timestamp: $timestamp}]->(m)"),
                 parameters={
                     "userId": movie_dict["userId"],
                     "movieId": movie_dict["movie"]["movieId"],
