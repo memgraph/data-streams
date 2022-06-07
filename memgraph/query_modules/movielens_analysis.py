@@ -4,7 +4,7 @@ Sample trigger for calling write procedure:
 CREATE TRIGGER newMovieRating
 ON CREATE AFTER COMMIT EXECUTE
 UNWIND createdEdges AS e
-CALL movie_analysis.new_rating(e) YIELD *;
+CALL movielens_analysis.new_rating(e) YIELD *;
 """
 import mgp
 from queue import PriorityQueue
@@ -32,7 +32,7 @@ def new_rating(
 
 """
 Sample query module call that returns 10 movies (if there are 10) that have 4 or more ratings. 
-CALL movie_analysis.best_rated_movies(10, 4) YIELD *
+CALL movielens_analysis.best_rated_movies(10, 1) YIELD *
 """
 
 @mgp.read_proc
