@@ -18,7 +18,7 @@ def parse_arguments():
     parser.add_argument("--platforms", nargs="+", choices=["kafka", "redpanda", "rabbitmq", "pulsar"],
                         default=["kafka", "redpanda", "rabbitmq", "pulsar"])
     parser.add_argument("--dataset", type=str,
-                        choices=["art-blocks", "github", "movielens"], default="movielens")
+                        choices=["art-blocks", "github", "movielens", "amazon-books"], default="movielens")
 
     value = parser.parse_args()
     return value

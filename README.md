@@ -15,7 +15,8 @@ Currently available datasets:
 
 - [Art Blocks](./datasets/art-blocks/data)
 - [GitHub](./datasets/github/data)
-- [MovieLens](.datasets/movielens/data)
+- [MovieLens](./datasets/movielens/data)
+- [Amazon books](./datasets/amazon-books/data/)
 
 ## :fast_forward: How to start the streams?
 
@@ -33,8 +34,9 @@ The argument `<PLATFORMS>` can be:
 
 The argument `<DATASET>` can be:
 -  `github` ,
--  `art-blocks` or
--  `movielens`.
+-  `art-blocks` ,
+-  `movielens` or
+-  `amazon-books`.
 
 That script will start chosen streaming platforms in docker container, and you will see messages from chosen dataset being consumed.
 
@@ -47,6 +49,9 @@ For example, if you choose Kafka as a streaming platform and art-blocks for your
 ```
 python3 start.py --platforms kafka --dataset art-blocks
 ```
+
+> If you are a Windows user and the upper command doesn't work, try replacing `python3` with `python`.
+
 Next, in the new terminal window run:
 ```
 docker-compose up art-blocks-memgraph
