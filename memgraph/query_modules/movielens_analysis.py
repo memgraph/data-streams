@@ -2,7 +2,7 @@
 Sample trigger for calling write procedure: 
 
 CREATE TRIGGER newMovieRating
-ON CREATE AFTER COMMIT EXECUTE
+ON CREATE BEFORE COMMIT EXECUTE
 UNWIND createdEdges AS e
 CALL movielens_analysis.new_rating(e) YIELD *;
 """
@@ -31,8 +31,8 @@ def new_rating(
 
 
 """
-Sample query module call that returns 10 movies (if there are 10) that have 4 or more ratings. 
-CALL movielens_analysis.best_rated_movies(10, 1) YIELD *
+Sample query module call that returns 10 movies (if there are 10) that have 3 or more ratings. 
+CALL movielens_analysis.best_rated_movies(10, 3) YIELD *
 """
 
 @mgp.read_proc
@@ -50,17 +50,14 @@ def best_rated_movies(
             title = movie.properties.get("title")
             if num_of_ratings >= ratings_treshold:
                 rating = movie.properties.get("rating_sum")/num_of_ratings
-                if q.empty():
+                if q.empty() or not q.full():
                     q.put((rating, title))
                 else: 
-                    if not q.full():
-                        q.put((rating, title))
+                    top = q.get()
+                    if top[0] > rating:
+                        q.put(top)
                     else: 
-                        top = q.get()
-                        if top[0] > rating:
-                            q.put(top)
-                        else: 
-                            q.put((rating, title))
+                        q.put((rating, title))
                         
     movies = list()
     while not q.empty():
