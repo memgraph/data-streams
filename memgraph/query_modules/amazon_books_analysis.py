@@ -68,3 +68,4 @@ def best_rated_books(
 
     books.reverse()
     return mgp.Record(best_rated_books=books)
+    
