@@ -226,3 +226,16 @@ services:
       - memgraph-mage
     networks:
       - app-tier
+
+  github-commits-memgraph:
+    build:
+      context: ./
+      dockerfile: ./data-analysis/Dockerfile
+    entrypoint: [ "python3", "github-commits-memgraph.py" ]
+    environment:
+      MEMGRAPH_IP: memgraph-mage
+      MEMGRAPH_PORT: "7687"
+    depends_on:
+      - memgraph-mage
+    networks:
+      - app-tier
