@@ -12,14 +12,16 @@ def commit(messages: mgp.Messages
         result_queries.append(
             mgp.Record(
                 query=("MERGE (u1:User {username: $author}) "
-                       "CREATE (c:Commit {id: $commit}) "
-                       "CREATE (c)-[:CREATED_BY]->(u1) "
+                       "MERGE (c:Commit {id: $commit}) "
+                       "MERGE (c)-[:CREATED_BY]->(u1) "
                        "WITH u1 "
                        "UNWIND $followers AS follower "
-                       "MERGE (u2:User {username: follower})-[:FOLLOWS]->(u1) "
+                       "MERGE (u2:User {username: follower}) "
+                       "MERGE (u2)-[:FOLLOWS]->(u1) "
                        "WITH u1 "
                        "UNWIND $following AS follows "
-                       "MERGE (u3:User {username: follows})<-[:FOLLOWS]-(u1) "),
+                       "MERGE (u3:User {username: follows}) "
+                       "MERGE (u3)<-[:FOLLOWS]-(u1) "),
                 parameters={
                     "commit": commit_dict["commit"],
                     "author": commit_dict["author"],
