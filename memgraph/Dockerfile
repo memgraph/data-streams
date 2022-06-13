@@ -1,10 +1,5 @@
-FROM memgraph/memgraph-mage:1.1.1
+FROM memgraph/memgraph-mage:1.3
 
-USER root
-
-# Copy the local query modules
+# Copy the local query modules and transformations
 COPY transformations/ /transformations
-
 COPY query_modules/ /usr/lib/memgraph/query_modules
-
-USER memgraph

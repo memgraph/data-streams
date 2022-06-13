@@ -10,6 +10,8 @@ import stream.rabbitmq as rabbitmq
 KAFKA_IP = os.getenv('KAFKA_IP', 'localhost')
 KAFKA_PORT = os.getenv('KAFKA_PORT', '9093')
 KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', 'movielens')
+KAFKA_USERNAME = os.getenv('KAFKA_USERNAME', 'admin')
+KAFKA_PASSWORD = os.getenv('KAFKA_PASSWORD', 'admin')
 REDPANDA_IP = os.getenv('REDPANDA_IP', 'localhost')
 REDPANDA_PORT = os.getenv('REDPANDA_PORT', '29092')
 REDPANDA_TOPIC = os.getenv('REDPANDA_TOPIC', 'movielens')
@@ -61,10 +63,10 @@ def run(generate):
     process_list = list()
 
     if KAFKA == 'True':
-        kafka_redpanda.create_topic(KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC)
+        kafka_redpanda.create_topic(KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC, KAFKA_USERNAME, KAFKA_PASSWORD)
 
         p1 = Process(target=lambda: kafka_redpanda.producer(
-            KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC, generate, args.stream_delay))
+            KAFKA_IP, KAFKA_PORT, KAFKA_TOPIC, KAFKA_USERNAME, KAFKA_PASSWORD, generate, args.stream_delay))
         p1.start()
         process_list.append(p1)
 

@@ -1,8 +1,9 @@
-from gqlalchemy import Memgraph
-from pathlib import Path
-from time import sleep
 import logging
 import os
+
+from gqlalchemy import Memgraph
+from time import sleep
+
 
 log = logging.getLogger(__name__)
 
@@ -23,8 +24,15 @@ def connect_to_memgraph(memgraph_ip, memgraph_port):
 
 def set_stream(memgraph):
     log.info("Creating stream connections on Memgraph")
-    memgraph.execute("CREATE KAFKA STREAM ratings_stream TOPICS ratings TRANSFORM amazon_books.book_ratings BOOTSTRAP_SERVERS 'kafka:9092' CREDENTIALS {'sasl.username':'public', 'sasl.password':'public', 'security.protocol':'SASL_PLAINTEXT', 'sasl.mechanism':'PLAIN'};")
-    memgraph.execute("START STREAM ratings_stream;")
+    memgraph.execute("""CREATE KAFKA STREAM github_commits 
+                        TOPICS github 
+                        TRANSFORM github_commits.commit  
+                        BOOTSTRAP_SERVERS '54.74.181.194:9093'
+                        CREDENTIALS {'sasl.username':'public', 
+                                     'sasl.password':'public', 
+                                     'security.protocol':'SASL_PLAINTEXT', 
+                                     'sasl.mechanism':'PLAIN'};""")
+    memgraph.execute("START STREAM github_commits;")
 
     # TODO: What to do when a new object is created
     """
