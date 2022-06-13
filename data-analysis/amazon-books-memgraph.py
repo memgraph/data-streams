@@ -23,7 +23,7 @@ def connect_to_memgraph(memgraph_ip, memgraph_port):
 
 def set_stream(memgraph):
     log.info("Creating stream connections on Memgraph")
-    memgraph.execute("CREATE KAFKA STREAM ratings_stream TOPICS ratings TRANSFORM amazon_books.book_ratings BOOTSTRAP_SERVERS 'kafka:9092' CREDENTIALS {'sasl.username':'public', 'sasl.password':'public', 'security.protocol':'SASL_PLAINTEXT', 'sasl.mechanism':'PLAIN'};")
+    memgraph.execute("CREATE KAFKA STREAM ratings_stream TOPICS book-ratings TRANSFORM amazon_books.book_ratings BOOTSTRAP_SERVERS 'kafka:9092' CREDENTIALS {'sasl.username':'public', 'sasl.password':'public', 'security.protocol':'SASL_PLAINTEXT', 'sasl.mechanism':'PLAIN'};")
     memgraph.execute("START STREAM ratings_stream;")
 
     # TODO: What to do when a new object is created

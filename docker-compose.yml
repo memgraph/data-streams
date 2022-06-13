@@ -166,10 +166,10 @@ services:
     env_file:
       platform_variables.env
     environment:
-      KAFKA_TOPIC: "ratings"
-      REDPANDA_TOPIC: "ratings"
-      RABBITMQ_QUEUE: "ratings"
-      PULSAR_TOPIC: "ratings"
+      KAFKA_TOPIC: "book-ratings"
+      REDPANDA_TOPIC: "book-ratings"
+      RABBITMQ_QUEUE: "book-ratings"
+      PULSAR_TOPIC: "book-ratings"
     networks:
       - app-tier
       
