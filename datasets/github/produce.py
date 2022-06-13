@@ -1,3 +1,4 @@
+import ast
 import csv
 import stream.producer as producer
 
@@ -12,8 +13,8 @@ def generate():
                 data = {
                     'commit': rows['commit'],
                     'author': rows['author'],
-                    'followers': rows['followers'],
-                    'following': rows['following'],
+                    'followers': ast.literal_eval(rows['followers']),
+                    'following': ast.literal_eval(rows['following']),
                 }
                 yield data
 
