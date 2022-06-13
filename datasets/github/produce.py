@@ -14,7 +14,7 @@ def generate():
                     'commit': rows['commit'],
                     'author': rows['author'],
                     'followers': ast.literal_eval(rows['followers']),
-                    'following': rows['following'],
+                    'following': ast.literal_eval(rows['following']),
                 }
                 yield data
 
