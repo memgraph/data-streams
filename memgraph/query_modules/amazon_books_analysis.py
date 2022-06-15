@@ -50,7 +50,7 @@ def best_rated_books(
         if label.name == "Book": 
             num_of_ratings = book.properties.get("num_of_ratings")
             title = book.properties.get("title")
-            if  num_of_ratings >= ratings_treshold:
+            if num_of_ratings != None and num_of_ratings >= ratings_treshold:
                 rating = book.properties.get("rating_sum")/num_of_ratings
                 if q.empty() or not q.full():
                     q.put((rating, title))
