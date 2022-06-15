@@ -48,7 +48,7 @@ def best_rated_movies(
         if label.name == "Movie": 
             num_of_ratings = movie.properties.get("num_of_ratings")
             title = movie.properties.get("title")
-            if num_of_ratings >= ratings_treshold:
+            if num_of_ratings != None and num_of_ratings >= ratings_treshold:
                 rating = movie.properties.get("rating_sum")/num_of_ratings
                 if q.empty() or not q.full():
                     q.put((rating, title))
