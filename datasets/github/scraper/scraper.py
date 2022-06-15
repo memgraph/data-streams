@@ -37,7 +37,7 @@ def parse_args():
 
 
 args = parse_args()
-g = Github("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")
+g = Github("<TOKEN>")
 
 
 def get_contributors(repo):
@@ -95,7 +95,9 @@ def scrape_data(repositories):
             commits = get_commits(repo)
             for commit in tqdm(commits):
                 author = commit.author
-
+                print(author)
+                if not author:
+                    continue
                 followers = []
                 if (args.all or args.followers):
                     followers = get_followers(author)
