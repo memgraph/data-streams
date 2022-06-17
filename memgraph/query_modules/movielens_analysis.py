@@ -31,8 +31,13 @@ def new_rating(
 
 
 """
-Sample query module call that returns 10 movies (if there are 10) that have 3 or more ratings. 
-CALL movielens_analysis.best_rated_movies(10, 3) YIELD *
+Sample query module call that returns 10 movies (if there are 10) that have 20 or more ratings. 
+CALL movielens_demo.best_rated_movies(10, 20) 
+YIELD best_rated_movies 
+UNWIND best_rated_movies AS Movie
+WITH Movie[0] AS Rating, Movie[1] as Title
+RETURN Rating, Title
+
 """
 
 @mgp.read_proc
@@ -65,3 +70,47 @@ def best_rated_movies(
 
     movies.reverse()
     return mgp.Record(best_rated_movies=movies)
+
+"""
+Sample query call that returns worst rated 5 movies (if there are 5) that have 8 or more ratings. 
+CALL movielens_demo.worst_rated_movies(5, 8) 
+YIELD worst_rated_movies 
+UNWIND worst_rated_movies AS Movie
+WITH Movie[0] AS Rating, Movie[1] as Title
+RETURN Rating, Title
+
+"""
+
+@mgp.read_proc
+def worst_rated_movies(
+    context: mgp.ProcCtx,
+    number_of_movies: int,
+    ratings_treshold: int
+) -> mgp.Record(worst_rated_movies = list):
+
+    q = PriorityQueue(maxsize=number_of_movies)
+    for movie in context.graph.vertices:
+        label, = movie.labels
+        if label.name == "Movie": 
+            num_of_ratings = movie.properties.get("num_of_ratings")
+            title = movie.properties.get("title")
+            if num_of_ratings != None and num_of_ratings >= ratings_treshold:
+                rating = movie.properties.get("rating_sum")/num_of_ratings
+                rating = rating * -1
+                if q.empty() or not q.full():
+                    q.put((rating, title))
+                else: 
+                    top = q.get()
+                    if top[0] > rating:
+                        q.put(top)
+                    else: 
+                        q.put((rating, title))
+                        
+    movies = list()
+    while not q.empty():
+        rating, title = q.get()
+        rating = abs(rating)
+        movies.append((rating, title))
+
+    movies.reverse()
+    return mgp.Record(worst_rated_movies=movies)
