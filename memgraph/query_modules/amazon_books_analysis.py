@@ -119,5 +119,3 @@ def recommend_books_for_user(
 
     books.reverse()
     return mgp.Record(recommended_books=books)           
-    
-    
