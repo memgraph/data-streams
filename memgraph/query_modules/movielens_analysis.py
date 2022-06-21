@@ -32,7 +32,7 @@ def new_rating(
 
 """
 Sample query module call that returns 10 movies (if there are 10) that have 20 or more ratings. 
-CALL movielens_demo.best_rated_movies(10, 20) 
+CALL movielens_analysis.best_rated_movies(10, 20) 
 YIELD best_rated_movies 
 UNWIND best_rated_movies AS Movie
 WITH Movie[0] AS Rating, Movie[1] as Title
@@ -73,7 +73,7 @@ def best_rated_movies(
 
 """
 Sample query call that returns worst rated 5 movies (if there are 5) that have 8 or more ratings. 
-CALL movielens_demo.worst_rated_movies(5, 8) 
+CALL movielens_analysis.worst_rated_movies(5, 8) 
 YIELD worst_rated_movies 
 UNWIND worst_rated_movies AS Movie
 WITH Movie[0] AS Rating, Movie[1] as Title
